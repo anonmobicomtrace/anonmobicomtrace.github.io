@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="TRACE: Consolidating Embodied Experience into Executable On-Device Skills">
+<meta name="keywords" content="task-level compute reduction, proactive sensing, skill graphs, mobile embodied agents, on-device inference, robot, vehicle">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TRACE: Consolidating Embodied Experience into Executable On-Device Skills</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛠️</text></svg>">
+<style>
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{margin:0;background:#fff;color:#4a4a4a;font-family:"Noto Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  font-size:1em;font-weight:400;line-height:1.5}
+*{box-sizing:border-box}
+a{color:#3273dc;text-decoration:none}
+a:hover{text-decoration:underline}
+strong{color:#363636;font-weight:700}
+code{font-family:"Noto Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;font-size:.92em}
+
+.section{padding:3rem 1.5rem}
+.hero-body{padding:3rem 1.5rem}
+.container{margin:0 auto;position:relative;width:auto;max-width:1110px}
+.container.is-max-desktop{max-width:960px}
+.has-text-centered{text-align:center}
+.has-text-justified{text-align:justify}
+.column.is-three-quarters{max-width:75%;margin:0 auto}
+@media (max-width:768px){.column.is-three-quarters{max-width:100%}}
+
+.title{color:#363636;font-family:"Google Sans","Noto Sans",sans-serif;font-weight:600;line-height:1.125;margin:0 0 1.5rem}
+.title.is-1{font-size:2.7rem;font-weight:700;letter-spacing:-.01em}
+.title.is-3{font-size:2rem}
+.title.is-4{font-size:1.45rem;margin-bottom:1rem}
+@media (max-width:768px){.title.is-1{font-size:1.9rem}.title.is-3{font-size:1.5rem}}
+
+img.teaser,video.teaser{display:block;margin:0 auto;max-width:100%;height:auto;border-radius:4px}
+.media-caption{margin:.9rem auto 0;max-width:900px;color:#5b5b5b;font-size:.95rem;line-height:1.55}
+.content p{margin:0 0 1.1em}
+.content ol,.content ul{margin:0 0 1.1em 1.4em;padding:0}
+.content li{margin-bottom:.5em}
+
+.figrow{display:flex;flex-wrap:wrap;gap:1.6rem;justify-content:center;margin-top:1.2rem}
+.figrow>figure{flex:1 1 280px;margin:0}
+.figrow.two>figure{flex:1 1 400px}
+.figrow img{width:100%;height:auto;border-radius:4px;background:#fafafa}
+.figrow figcaption{margin-top:.6rem;color:#5b5b5b;font-size:.9rem;line-height:1.5;text-align:left}
+.figrow figcaption b{color:#363636}
+
+.comparisons-row{display:flex;flex-wrap:wrap;gap:1.6rem;justify-content:center;margin-bottom:1.6rem}
+.comparison{flex:1 1 420px}
+.comparison video{width:100%;height:auto;border-radius:4px;background:#000;display:block}
+.comparison .cap{margin-top:.6rem;color:#5b5b5b;font-size:.9rem;line-height:1.55;text-align:left}
+.comparison .cap b{color:#363636}
+
+#demo-video .column{max-width:900px;margin:0 auto}
+#demo-video video{border:1px solid #dcdcdc;border-radius:6px;box-shadow:0 2px 14px rgba(0,0,0,.10);background:#000;width:100%;max-width:100%}
+.insight{background:#f5f7fa;border-left:4px solid #3273dc;border-radius:0 4px 4px 0;
+  padding:1rem 1.25rem;margin:1.4rem auto 0;max-width:840px;color:#4a4a4a;font-size:.97rem;line-height:1.65}
+.insight b{color:#363636}
+.venue{margin:-0.6rem 0 0;color:#5b5b5b;font-size:1.05rem;letter-spacing:.02em}
+.tablewrap{overflow-x:auto;margin:0 0 1rem}
+table.res{border-collapse:collapse;width:100%;text-align:center;font-size:.86rem;font-variant-numeric:tabular-nums}
+table.res thead tr{border-bottom:2px solid #333}
+table.res thead tr.sub{border-bottom:1px solid #999}
+table.res th{padding:7px 9px;font-weight:600;color:#363636;white-space:nowrap}
+table.res td{padding:6px 9px;white-space:nowrap}
+table.res tbody tr.rule td{border-top:1.5px solid #333}
+table.res tbody tr.ours{background:#f4f7fb}
+table.res tbody tr.ours td{font-weight:600;color:#363636}
+table.res tbody tr:last-child td{border-bottom:2px solid #333}
+table.res td.first,table.res th.first{text-align:left}
+.tabcap{color:#5b5b5b;font-size:.9rem;line-height:1.55;margin:.2rem 0 0}
+
+table.trace{border-collapse:collapse;width:100%;font-size:.86rem;text-align:left}
+table.trace thead tr{border-bottom:2px solid #333}
+table.trace th{padding:7px 9px;font-weight:600;color:#363636}
+table.trace td{padding:8px 9px;border-bottom:1px solid #e6e6e6;vertical-align:top}
+table.trace td.tool{font-family:"Noto Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:#b4600a;white-space:nowrap}
+table.trace td.win{font-family:"Noto Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:#7a7a7a;white-space:nowrap}
+table.trace td.obs{font-family:"Noto Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;font-size:.82rem;color:#363636;line-height:1.5}
+table.trace tr.commit td{background:#f4f7fb;border-bottom:2px solid #333}
+
+
+/* case layout, adapted from the rollout-review page */
+.case{margin-top:3.2rem;border-top:2px solid #363636;padding-top:1.5rem}
+.case:first-of-type{margin-top:2rem}
+.case-head{max-width:70ch}
+.case-head .eyebrow{font-family:"Noto Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;font-size:.72rem;letter-spacing:.15em;
+  text-transform:uppercase;color:#8a8a8a;margin:0 0 .4em}
+.case-head h4{font-family:"Google Sans","Noto Sans",sans-serif;font-size:1.35rem;font-weight:600;
+  color:#363636;margin:0 0 .35em;letter-spacing:-.01em}
+.case-head .lede{color:#5b5b5b;font-size:.97rem;line-height:1.6;margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:.9rem 0 0}
+.chip{font-family:"Noto Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;font-size:.76rem;padding:3px 9px;
+  border:1px solid #dcdcdc;border-radius:2px;background:#fafafa;color:#5b5b5b;white-space:nowrap}
+.chip.gt{border-color:#b4600a;color:#b4600a;font-weight:600}
+.casegrid{display:grid;grid-template-columns:1fr;gap:1.6rem;margin-top:1.4rem}
+@media(min-width:1000px){.casegrid{grid-template-columns:minmax(300px,400px) 1fr;gap:2.2rem;align-items:start}
+  .casegrid .left{position:sticky;top:20px}}
+.casegrid .left{display:flex;flex-direction:column;gap:1rem}
+.casegrid .left video{width:100%;display:block;border-radius:4px;background:#000}
+.casegrid .left figcaption{margin-top:.45rem;color:#5b5b5b;font-size:.85rem;line-height:1.5}
+.facts{border:1px solid #e2e2e2;border-radius:4px;background:#fafafa;padding:.9rem 1rem}
+.facts h5{margin:0 0 .6em;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:#363636;font-weight:700}
+.facts dl{margin:0;display:grid;gap:5px}
+.facts .tr{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:baseline}
+.facts dt{color:#5b5b5b;font-size:.84rem;white-space:nowrap}
+.facts dd{margin:0;font-family:"Noto Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;font-size:.82rem;color:#363636;text-align:right}
+.facts .note{margin:.8em 0 0;font-size:.8rem;color:#7a7a7a;line-height:1.5}
+h5.rlab{margin:0 0 .5em;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:#363636;font-weight:700}
+.tl{margin:.2rem 0 .3rem}
+.tl-track{position:relative;height:78px;cursor:pointer;user-select:none;touch-action:none;background:#fafafa;border:1px solid #e2e2e2;border-radius:3px}
+.band{position:absolute;top:0;bottom:0}
+.band.speech{background:rgba(91,127,166,.16)}
+.band.gesture{background:rgba(180,96,10,.14)}
+.band span{position:absolute;left:6px;font-family:"Noto Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  font-size:.68rem;color:#5b5b5b;white-space:nowrap}
+.band.speech2{background:rgba(91,127,166,.16)}
+/* pre: the stretch before the clock's zero — nothing has been said yet */
+.band.pre{background:rgba(0,0,0,.05)}
+.band.speech span{top:5px}.band.gesture span{top:22px}.band.speech2 span{top:39px}
+.playhead{position:absolute;top:0;bottom:0;width:2px;background:#363636;pointer-events:none;z-index:4}
+.playhead b{position:absolute;top:-6px;left:-6px;width:14px;height:14px;border-radius:50%;background:#363636;display:block}
+.tl-readout{font-family:"Noto Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;font-size:.78rem;color:#5b5b5b;margin:.45rem 0 0}
+.tl-readout b{color:#b4600a;font-weight:600}
+.call.active{outline:2px solid #363636;outline-offset:1px}
+.call{position:absolute;bottom:8px;height:24px;min-width:4px;border:0;padding:0;cursor:pointer;border-radius:2px;
+  background:#5b7fa6}
+.call:hover,.call:focus-visible{outline:2px solid #363636;outline-offset:1px}
+.call.read{background:#2f7d78}.call.survey{background:#7a5ea8}.call.aim{background:#c08a2e}
+.call.miss{background:#b9bcc2}
+.stop{position:absolute;top:0;bottom:0;width:2px;background:#b4600a}
+.stop{z-index:3}
+.tl-axis{position:relative;height:1.1rem;margin-top:.15rem}
+.tl-axis .sec{position:absolute;transform:translateX(-50%);font-family:"Noto Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  font-size:.7rem;color:#8a8a8a}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin:1.5rem 0 1rem;font-size:.78rem;color:#5b5b5b}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+tr.hit td{background:#fff6e8}
+.statrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1px;background:#e2e2e2;
+  border:1px solid #e2e2e2;border-radius:4px;overflow:hidden;margin:.2rem 0 1.1rem}
+.statrow>div{background:#fff;padding:.8rem .9rem}
+.statrow .k{font-size:.78rem;color:#5b5b5b;line-height:1.35}
+.statrow .v{font-family:"Noto Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;font-size:1.35rem;font-weight:600;color:#363636;
+  margin-top:.25rem;font-variant-numeric:tabular-nums}
+.statrow .v.ours{color:#b4600a}
+pre{background:#f5f5f5;color:#363636;padding:1.1rem 1.25rem;overflow-x:auto;border-radius:4px;
+  font-size:.85rem;line-height:1.6;white-space:pre}
+.callout{border-left:4px solid #b4600a;background:#fbf7f2;padding:.9rem 1.15rem;border-radius:0 4px 4px 0;
+  color:#5b5b5b;font-size:.95rem;line-height:1.6;margin:1.2rem 0}
+.callout b{color:#363636}
+footer{background:#fafafa;border-top:1px solid #ededed;padding:2.2rem 1.5rem;color:#7a7a7a;font-size:.85rem;line-height:1.6}
+footer .container{max-width:960px}
+hr.rule{border:0;border-top:1px solid #ededed;margin:0}
+</style>
+</head>
+<body>
+
+<section class="hero" id="top">
+  <div class="hero-body">
+    <div class="container">
+      <div class="has-text-centered">
+        <h1 class="title is-1">TRACE: Consolidating Embodied Experience into Executable On-Device Skills</h1>
+        <p class="venue">#19 Submitted to MobiCom 2027</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Demo video -->
+<section class="section">
+  <div class="container">
+    <div id="demo-video" class="has-text-centered">
+      <div class="column is-three-quarters">
+        <h3 class="title is-3">Demo Video</h3>
+        <video class="teaser" controls playsinline preload="metadata">
+          <source src="assets/video/TRACE_demo.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- Abstract -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="has-text-centered"><h3 class="title is-3">Abstract</h3></div>
+    <div class="content has-text-justified">
+      <p>Embodied agents must often execute onboard, where cloud offloading is constrained by network
+      dependence and communication latency. Yet making models smaller does not necessarily make
+      onboard execution efficient. Complex embodied tasks require step-by-step decisions based on live
+      observations, making <strong>repeated model inference the dominant source of execution latency</strong>.</p>
+      <p>The key idea of TRACE is to <strong>compile recurring decision structures while preserving their
+      observation dependencies</strong>, enabling adaptive on-device skill replay over live inputs without
+      repeated model inference. TRACE connects heterogeneous perception and control operations through
+      a <strong>unified cross-modal tool interface</strong> and extracts <strong>guarded skill graphs</strong> from noisy successful
+      traces. Unlike static textual skills or fixed workflows, these graphs encode
+      observation-conditioned control flow and data dependencies for runtime adaptation. At runtime, a
+      <strong>router gates skill replay by applicability and reliability</strong>, while unfamiliar requests and replay
+      deviations <strong>fall back to model-based reasoning from the current state</strong>, preserving partial
+      progress for recovery and skill updates.</p>
+      <p>Across four public datasets, three simulators, and two physical testbeds, TRACE <strong>reduces
+      end-to-end latency by 42.7% while preserving task accuracy</strong>, and avoids up to <strong>51.1% of model
+      generations and 45.5% of generated tokens</strong>.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- Key problem -->
+<section class="section">
+  <div class="container">
+    <div class="has-text-centered">
+      <h3 class="title is-3">Key Problem</h3>
+      <img class="teaser" src="assets/fig/Motivation_example.png" width="720" alt="Slow step-by-step deliberation versus one-shot fast execution" loading="lazy">
+    </div>
+    <div class="content" style="max-width:820px;margin:1.4rem auto 0">
+      <ul>
+        <li><strong>Embodied agents must often execute onboard</strong> &mdash; cloud offloading is
+        constrained by network dependence and communication latency.</li>
+        <li><strong>Complex tasks are decided step by step on live observations</strong> &mdash; each
+        sensing or action step invokes the model again, so repeated inference dominates end-to-end
+        latency.</li>
+        <li><strong>Model compression addresses only part of this overhead</strong> &mdash; it reduces
+        the cost of each invocation, not how many invocations a task needs.</li>
+      </ul>
+    </div>
+    <div class="insight"><b>Key insight.</b> On-device latency is set by <b>how many times</b> the agent has to think, not by how large the model is, so compressing the model leaves most of the execution overhead untouched.</div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- Motivation -->
+<section class="section">
+  <div class="container">
+    <div class="has-text-centered">
+      <h3 class="title is-3">Motivation</h3>
+      <img class="teaser" src="assets/fig/Motivation.png" width="820" alt="A guided-parking request: adaptive sensing catches every observation window while a fixed pipeline misses one" loading="lazy">
+    </div>
+    <div class="content" style="max-width:840px;margin:1.4rem auto 0">
+      <ul>
+        <li><strong>Sensing must be selected online.</strong> A task touches only 2.1 of 11 capability
+        categories; fusing every stream takes 3.3&times; longer, and a one-pass omni-modal model
+        reaches just 32.4&#37; &mdash; a missed window (figure above) never comes back.</li>
+        <li><strong>One recorded chain does not transfer.</strong> 67.3&#37; of task groups need more
+        than one sensing sequence, and fixing a sensor subset per task loses 13.1 points &mdash; the
+        next step depends on the current observation.</li>
+        <li><strong>What repeats is the structure.</strong> Inter-step reasoning costs 57&ndash;84&#37;
+        of generated tokens, yet the 100 most frequent chain patterns cover 64&ndash;71&#37; of
+        successes &mdash; so TRACE compiles the recurring structure and keeps each decision bound to
+        live inputs.</li>
+      </ul>
+    </div>
+    <div class="insight"><b>Key insight.</b> What recurs across instances is the <b>decision structure</b>, not the realized sequence. Reuse is therefore safe only if the structure is replayed while every decision inside it stays bound to live observations.</div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- System overview -->
+<section class="section">
+  <div class="container">
+    <div class="has-text-centered">
+      <h3 class="title is-3">How TRACE Works</h3>
+      <img class="teaser" src="assets/fig/TaskExample.png" width="620" alt="One deployed task: one-time initialization followed by on-device execution and library updates" loading="lazy">
+    </div>
+    <div class="content" style="max-width:820px;margin:1.6rem auto 0">
+      <ol>
+        <li><strong>Task.</strong> The user issues a request to the on-device agent &mdash; a question,
+        a monitoring job, or an action to perform.</li>
+        <li><strong>Route.</strong> A reliability-gated router sends the task down one of two paths,
+        both driving the same cross-modal tool pool:
+          <ul style="margin-top:.5em">
+            <li><strong>Omni Brain</strong> &mdash; unfamiliar task: the 2B model composes sensing and
+            action tools step by step, one model call per decision.</li>
+            <li><strong>Skill Library</strong> &mdash; recurring task: a guarded skill graph replays
+            with no model call between steps, its guards branching on live tool results.</li>
+          </ul>
+        </li>
+        <li><strong>Assistance.</strong> The resulting sensing chain executes over the live streams
+        and returns the answer or act to the user.</li>
+        <li><strong>Update.</strong> The outcome flows back into the library: successful chains are
+        compiled into new skills, and unreliable ones lose admission, so the fast path keeps
+        improving after deployment.</li>
+      </ol>
+    </div>
+    <div class="insight"><b>Key insight.</b> This division accelerates recurring execution while retaining full
+    model-based adaptability when reusable experience does not apply, and completed outcomes refine later admission
+    and compilation &mdash; closing the loop between fast-path efficiency and slow-path adaptability.</div>
+  </div>
+</section>
+
+<!-- Results -->
+<section class="section">
+  <div class="container">
+    <div class="has-text-centered"><h3 class="title is-3">Results</h3></div>
+    <img class="teaser" src="assets/fig/OverallEfficiency_new.png" width="1050" alt="Task score versus end-to-end latency on four public datasets and three simulators" loading="lazy">
+    <div class="media-caption has-text-centered">Task score against end-to-end latency on four public
+    datasets and three simulators.</div>
+
+    <div class="tablewrap" style="margin-top:1.8rem">
+      <table class="res">
+        <thead>
+          <tr class="sub"><th class="first" rowspan="2">Method</th><th rowspan="2">Controller</th>
+            <th colspan="4">Question answering (EM, %)</th><th colspan="3">Embodied (%)</th>
+            <th rowspan="2">Mean</th><th colspan="2">Cost per query</th><th rowspan="2">BS@30s</th></tr>
+          <tr><th>Ego-Exo4D</th><th>HoloAssist</th><th>OmniVideo</th><th>RealSource</th>
+            <th>HM-EQA</th><th>RealMan</th><th>CARLA</th><th>Calls</th><th>Time (s)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="first">OmniModel, Qwen2.5-Omni</td><td>3B</td><td>91.0</td><td>32.0</td><td>35.0</td><td>45.8</td><td>11.8</td><td>69.8</td><td>27.5</td><td>44.7</td><td>14.6</td><td>91.1</td><td>14.7</td></tr>
+          <tr><td class="first">TextAgent</td><td>0.8B</td><td>18.0</td><td>4.0</td><td>4.5</td><td>2.1</td><td>19.0</td><td>26.2</td><td>0.9</td><td>10.7</td><td>&ndash;</td><td>228.3</td><td>&ndash;</td></tr>
+          <tr><td class="first">ProAgent</td><td>2B</td><td>93.5</td><td>41.5</td><td>26.5</td><td>60.4</td><td>10.8</td><td>77.2</td><td>32.5</td><td>48.9</td><td>11.6</td><td>94.1</td><td>15.6</td></tr>
+          <tr><td class="first">AWM</td><td>2B</td><td>92.5</td><td>48.5</td><td>32.0</td><td>58.3</td><td>9.7</td><td>75.4</td><td>37.1</td><td>50.5</td><td>10.5</td><td>84.6</td><td>17.9</td></tr>
+          <tr><td class="first">TaskSense</td><td>2B+27B</td><td>88.0</td><td>43.0</td><td>30.5</td><td>58.3</td><td>8.7</td><td>38.0</td><td>25.7</td><td>41.7</td><td>12.3</td><td>95.8</td><td>13.1</td></tr>
+          <tr class="rule"><td class="first">Teacher, Qwen3-Omni</td><td>30B</td><td>98.0</td><td>64.0</td><td>62.0</td><td>59.7</td><td>48.0</td><td>52.1</td><td>30.2</td><td>59.1</td><td>1.69</td><td>113.9</td><td>15.6</td></tr>
+          <tr class="ours rule"><td class="first">TRACE-Delib</td><td>2B</td><td>90.0</td><td>68.5</td><td>55.0</td><td>79.2</td><td>39.5</td><td>92.7</td><td>41.5</td><td>66.6</td><td>4.11</td><td>39.1</td><td>51.1</td></tr>
+          <tr class="ours"><td class="first">TRACE</td><td>2B</td><td>93.8</td><td>65.6</td><td>58.0</td><td>70.8</td><td>43.6</td><td>95.3</td><td>48.5</td><td>67.9</td><td>3.44</td><td>22.4</td><td><b>67.9</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="insight"><b>Key insight.</b> Every baseline pays its full decision cost on each request, so a smaller model does not decide faster &mdash; the 0.8B agent is the slowest system in the table. Moving the recurring part of that cost off the request path is what lets a 2B brain lead on both task score and latency.</div>
+  </div>
+</section>
+
+<!-- Physical testbeds -->
+<section class="section">
+  <div class="container">
+    <div class="has-text-centered">
+      <h3 class="title is-3">On Physical Testbeds</h3>
+      <img class="teaser" src="assets/fig/RealScene.png" width="1080" alt="Testbeds and their simulators" loading="lazy">
+    </div>
+
+    <div class="case" id="case-parking">
+      <div class="case-head">
+        <h4>Guided parking</h4>
+        <p class="lede">Park in the bay the person outside is pointing at.</p>
+      </div>
+      <div class="casegrid">
+        <div class="left">
+          <figure><video controls loop playsinline preload="metadata"><source src="assets/video/parking_160108.mp4" type="video/mp4"></video></figure>
+          <figure><video controls muted loop playsinline preload="metadata"><source src="assets/video/parking_160108_front.mp4" type="video/mp4"></video></figure>
+        </div>
+        <div class="right">
+          <div class="tl">
+            <div class="tl-track" data-total="10" data-calls='[["c0", "probe_activity", 0.0, 0.2], ["c1", "listen_speech", 0.2, 1.2], ["c2", "locate_speaker", 1.2, 1.5], ["c3", "select_camera", 1.5, 1.6], ["c4", "read_gesture", 1.6, 3.1], ["c5", "scan_occupancy", 3.1, 3.6], ["c6", "commit", 3.6, 3.6]]'>
+              <div class="band speech" style="left:0.000%;width:12.000%"><span>spoken instruction</span></div>
+              <div class="band gesture" style="left:2.000%;width:36.000%"><span>gesture</span></div>
+              <button class="call" style="left:0.000%;width:2.000%" data-row="c0" title="probe_activity 0.0-0.2s"></button><button class="call read" style="left:2.000%;width:10.000%" data-row="c1" title="listen_speech 0.2-1.2s"></button><button class="call survey" style="left:12.000%;width:3.000%" data-row="c2" title="locate_speaker 1.2-1.5s"></button><button class="call aim" style="left:15.000%;width:1.000%" data-row="c3" title="select_camera 1.5-1.6s"></button><button class="call read" style="left:16.000%;width:15.000%" data-row="c4" title="read_gesture 1.6-3.1s"></button><button class="call survey" style="left:31.000%;width:5.000%" data-row="c5" title="scan_occupancy 3.1-3.6s"></button>
+              <div class="stop" style="left:36.000%"></div>
+              <div class="playhead" style="left:0%"><b></b></div>
+            </div>
+            <div class="tl-axis"><span class="sec" style="left:0.00%">0</span><span class="sec" style="left:19.80%">2</span><span class="sec" style="left:39.60%">4</span><span class="sec" style="left:59.41%">6</span><span class="sec" style="left:79.21%">8</span><span class="sec" style="left:100.00%">10</span></div>
+            <p class="tl-readout">clock <b class="tlnow">0.00s</b> &nbsp;<span class="tlwhat">drag, scrub or click a row</span></p>
+          </div>
+          <div class="tablewrap">
+            <table class="trace">
+              <thead><tr><th>#</th><th>Tool</th><th>Window</th><th>Returned</th></tr></thead>
+              <tbody><tr id="c0"><td>0</td><td class="tool">probe_activity</td><td class="win">0.0&ndash;0.2s</td><td class="obs">speech_active = true, gesture_active = false</td></tr><tr id="c1"><td>1</td><td class="tool">listen_speech</td><td class="win">0.2&ndash;1.2s</td><td class="obs">transcript &ldquo;talk over there.&rdquo; from that one-second window &mdash; coarse direction word: far</td></tr><tr id="c2"><td>2</td><td class="tool">locate_speaker</td><td class="win">1.2&ndash;1.5s</td><td class="obs">nobody is audibly speaking right now &mdash; the utterance had already finished</td></tr><tr id="c3"><td>3</td><td class="tool">select_camera</td><td class="win">1.5&ndash;1.6s</td><td class="obs">now viewing the front camera &mdash; both recorded views are shown on the left, and the arm is only in the cabin one</td></tr><tr id="c4"><td>4</td><td class="tool">read_gesture</td><td class="win">1.6&ndash;3.1s</td><td class="obs">arm bearing &minus;43.6&deg;: slot_2 sits 0.08 m from the pointing line, slot_1 at 1.47 m, slot_3 at 1.80 m</td></tr><tr id="c5"><td>5</td><td class="tool">scan_occupancy</td><td class="win">3.1&ndash;3.6s</td><td class="obs">occupancy (noisy): bays 1 and 7 taken; free candidates 2&ndash;6</td></tr><tr id="c6" class="commit"><td>6</td><td class="tool">commit</td><td class="win">3.6s</td><td class="obs">slot_2 &mdash; the bay nearest the pointing line that the occupancy scan also reported free</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="case" id="case-sentry">
+      <div class="case-head">
+        <h4>Sentry</h4>
+        <p class="lede">Decide whether the person walking up to the car warrants an alert.</p>
+      </div>
+      <div class="casegrid">
+        <div class="left">
+          <figure>
+            <video controls loop playsinline preload="metadata"><source src="assets/video/sentry_165141.mp4" type="video/mp4"></video>
+          </figure>
+        </div>
+        <div class="right">
+          <div class="tl">
+            <div class="tl-track" data-total="10" data-calls='[["s0", "probe_activity", 0.0, 0.2], ["s1", "track_approach", 0.2, 0.3], ["s2", "locate_motion", 0.3, 2.0], ["s3", "select_camera", 2.0, 2.1], ["s4", "track_approach", 2.1, 3.6], ["s5", "raise_fidelity", 3.6, 5.6], ["s6", "commit", 5.6, 5.6]]'>
+              <button class="call" style="left:0.000%;width:2.000%" data-row="s0" title="probe_activity 0.0-0.2s"></button><button class="call aim" style="left:2.000%;width:1.000%" data-row="s1" title="track_approach - failed, no camera selected"></button><button class="call survey" style="left:3.000%;width:17.000%" data-row="s2" title="locate_motion, to 2.0s"></button><button class="call aim" style="left:20.000%;width:1.000%" data-row="s3" title="select_camera 2.0-2.1s"></button><button class="call read" style="left:21.000%;width:15.000%" data-row="s4" title="track_approach 2.1-3.6s"></button><button class="call read" style="left:36.000%;width:20.000%" data-row="s5" title="raise_fidelity 3.6-5.6s"></button>
+              <div class="stop" style="left:56.000%"></div>
+              <div class="playhead" style="left:0%"><b></b></div>
+            </div>
+            <div class="tl-axis"><span class="sec" style="left:0.00%">0</span><span class="sec" style="left:20.00%">2</span><span class="sec" style="left:40.00%">4</span><span class="sec" style="left:60.00%">6</span><span class="sec" style="left:80.00%">8</span><span class="sec" style="left:100.00%">10</span></div>
+            <p class="tl-readout">clock <b class="tlnow">0.00s</b> &nbsp;<span class="tlwhat">drag, scrub or click a row</span></p>
+          </div>
+          <div class="tablewrap">
+            <table class="trace">
+              <thead><tr><th>#</th><th>Tool</th><th>Window</th><th>Returned</th></tr></thead>
+              <tbody><tr id="s0"><td>0</td><td class="tool">probe_activity</td><td class="win">0.0&ndash;0.2s</td><td class="obs">person_near=true, contact_now=false &mdash; the contact flag is conservative and stays false through most real contact</td></tr><tr id="s1"><td>1</td><td class="tool">track_approach</td><td class="win">0.2s</td><td class="obs">Error: no camera selected &mdash; the tracker needs a view first</td></tr><tr id="s2"><td>2</td><td class="tool">locate_motion</td><td class="win">to 2.0s</td><td class="obs">motion on the left side (noisy, confidence 0.8)</td></tr><tr id="s3"><td>3</td><td class="tool">select_camera</td><td class="win">2.0&ndash;2.1s</td><td class="obs">now viewing the left camera (the B-pillar unit)</td></tr><tr id="s4"><td>4</td><td class="tool">track_approach</td><td class="win">2.1&ndash;3.6s</td><td class="obs">body distance &minus;0.06 m over the sampled frames, trend steady, reaching_for_vehicle=true</td></tr><tr id="s5"><td>5</td><td class="tool">raise_fidelity</td><td class="win">3.6&ndash;5.6s</td><td class="obs">body distance 0.06 m, hand_on_vehicle=true, posture: reaching toward the vehicle</td></tr><tr id="s6" class="commit"><td>6</td><td class="tool">commit</td><td class="win">5.6s</td><td class="obs">alert</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="case" id="case-arm">
+      <div class="case-head">
+        <h4>Dual-arm push</h4>
+        <p class="lede">Push the box to the table edge and report the gap left.</p>
+      </div>
+      <div class="casegrid">
+        <div class="left">
+          <figure><video controls muted loop playsinline preload="metadata"><source src="assets/video/arm_head.mp4" type="video/mp4"></video></figure>
+          <figure><video controls muted loop playsinline preload="metadata"><source src="assets/video/arm_left_wrist.mp4" type="video/mp4"></video></figure>
+          <figure><video controls muted loop playsinline preload="metadata"><source src="assets/video/arm_right_wrist.mp4" type="video/mp4"></video></figure>
+        </div>
+        <div class="right">
+          <div class="tl">
+            <div class="tl-track" data-total="89" data-calls='[["a0", "observe (head)", 1.89, 1.92], ["a1", "push (right arm)", 4.08, 46.68], ["a2", "push (right arm), refused", 49.50, 49.53], ["a3", "observe (head)", 49.53, 49.56], ["a4", "observe (left_wrist)", 49.56, 49.70], ["a5", "observe (right_wrist)", 49.70, 49.89], ["a6", "push (right arm)", 54.74, 81.12], ["a7", "observe (head)", 88.76, 88.79], ["a8", "commit, withdrawn", 88.80, 88.85], ["a9", "commit", 88.85, 89.0]]'>
+              <div class="band gesture" style="left:4.580%;width:47.870%;top:0;bottom:56px"><span style="top:3px">push 1 &mdash; right arm strokes</span></div>
+              <div class="band speech" style="left:4.580%;width:47.870%;top:24px;bottom:32px"><span style="top:3px">left wrist watching the stroke</span></div>
+              <div class="band gesture" style="left:61.510%;width:29.640%;top:0;bottom:56px"><span style="top:3px">push 2 &mdash; right arm strokes</span></div>
+              <div class="band speech" style="left:61.510%;width:29.640%;top:24px;bottom:32px"><span style="top:3px">left wrist watching</span></div>
+              <button class="call read" style="left:2.120%;width:1.600%" data-row="a0" title="observe (head) at 1.9s"></button><button class="call" style="left:4.580%;width:47.870%" data-row="a1" title="push (right arm) 1: 4.1-46.7s"></button><button class="call miss" style="left:53.900%;width:1.600%" data-row="a2" title="push refused - an observation was required first"></button><button class="call read" style="left:55.650%;width:1.600%" data-row="a3" title="observe (head) at 49.6s"></button><button class="call read" style="left:57.400%;width:1.600%" data-row="a4" title="observe (left_wrist) at 49.6s"></button><button class="call read" style="left:59.150%;width:1.600%" data-row="a5" title="observe (right_wrist) at 49.9s"></button><button class="call" style="left:61.510%;width:29.640%" data-row="a6" title="push (right arm) 2: 54.7-81.1s"></button><button class="call read" style="left:97.100%;width:1.600%" data-row="a7" title="observe (head) at 88.8s"></button>
+              <div class="stop" style="left:99.800%"></div>
+              <div class="playhead" style="left:0%"><b></b></div>
+            </div>
+            <div class="tl-axis"><span class="sec" style="left:0.00%">0</span><span class="sec" style="left:22.47%">20</span><span class="sec" style="left:44.94%">40</span><span class="sec" style="left:67.42%">60</span><span class="sec" style="left:89.89%">80</span><span class="sec" style="left:100.00%">89</span></div>
+            <p class="tl-readout">clock <b class="tlnow">0.00s</b> &nbsp;<span class="tlwhat">drag, scrub or click a row</span></p>
+          </div>
+          <div class="tablewrap">
+            <table class="trace">
+              <thead><tr><th>#</th><th>Tool</th><th>Window</th><th>Returned</th></tr></thead>
+              <tbody><tr id="a0"><td>0</td><td class="tool">observe (head)</td><td class="win">1.9s</td><td class="obs">box at (0.236, 0.307) &plusmn;1.5 cm, gap to the far edge 32.3 cm; reachable arm: right</td></tr><tr id="a1"><td>1</td><td class="tool">push (right arm)</td><td class="win">4.1&ndash;46.7s</td><td class="obs">right arm strokes: object moved 9.8 cm (asked 10.0)<br>observer for this stroke: the left wrist camera, aimed at the object for the whole pass</td></tr><tr id="a2" class="miss"><td>2</td><td class="tool">push (right arm)</td><td class="win">49.5s</td><td class="obs">not executed &mdash; &ldquo;an observation was required first&rdquo;. The three readings below came back instead of the stroke</td></tr><tr id="a3"><td>3</td><td class="tool">observe (head)</td><td class="win">49.6s</td><td class="obs">box at (0.193, 0.405), gap now 22.5 cm &mdash; push again</td></tr><tr id="a4"><td>4</td><td class="tool">observe (left_wrist)</td><td class="win">49.6s</td><td class="obs">object not in view &mdash; 32&#37; of the frame is the gripper</td></tr><tr id="a5"><td>5</td><td class="tool">observe (right_wrist)</td><td class="win">49.9s</td><td class="obs">cardboard at centre-upper of this arm&rsquo;s own view</td></tr><tr id="a6"><td>6</td><td class="tool">push (right arm)</td><td class="win">54.7&ndash;81.1s</td><td class="obs">right arm strokes: moved 7.5 cm &mdash; capped to 9.3 cm by the table edge<br>observer for this stroke: the left wrist camera</td></tr><tr id="a7"><td>7</td><td class="tool">observe (head)</td><td class="win">88.8s</td><td class="obs">box at (0.068, 0.537), and the head re-measures the block as deeper than before &mdash; half-depth 0.135 m against 0.080 m &mdash; so its far face now sits at 0.672 m and the gap reads 3.8 cm. Of the 18.7 cm the gap closed since the last reading, 13.1 cm is travel and 5.5 cm is the re-measurement</td></tr><tr id="a8" class="miss"><td>8</td><td class="tool">commit</td><td class="win">after 88.8s</td><td class="obs">answer 0.225 m &mdash; withdrawn. It was derived from the position read before the second stroke, with no new reading taken; the episode did not end here</td></tr><tr id="a9" class="commit"><td>9</td><td class="tool">commit</td><td class="win">after 88.8s</td><td class="obs">answer 0.038 m, computed from the 88.8 s head reading &mdash; 0.710 &minus; (0.537 + 0.135)</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="case" id="case-cabin">
+      <div class="case-head">
+        <h4>Cabin monitoring, held-out task</h4>
+        <p class="lede">Say what the person in the driver&rsquo;s seat is doing.</p>
+      </div>
+      <div class="casegrid">
+        <div class="left">
+          <figure><video controls loop playsinline preload="metadata"><source src="assets/video/cabin_driver.mp4" type="video/mp4"></video></figure>
+          <figure><video controls muted loop playsinline preload="metadata"><source src="assets/video/cabin_rear.mp4" type="video/mp4"></video></figure>
+        </div>
+        <div class="right">
+          <div class="tl">
+            <div class="tl-track" data-total="10" data-calls='[["b0", "audio_asr", 1.25, 2.25], ["b1", "video_temporal_ground", 2.25, 3.75], ["b2", "video_caption", 3.75, 5.75], ["b3", "commit", 6.23, 6.23]]'>
+              <div class="band gesture" style="left:10.400%;width:22.700%"><span>grounded event window 1.04&ndash;3.31s</span></div>
+              <button class="call" style="left:12.500%;width:10.000%" data-row="b0" title="audio_asr 1.25-2.25s"></button><button class="call survey" style="left:22.500%;width:15.000%" data-row="b1" title="video_temporal_ground 2.25-3.75s"></button><button class="call read" style="left:37.500%;width:20.000%" data-row="b2" title="video_caption 3.75-5.75s"></button>
+              <div class="stop" style="left:62.300%"></div>
+              <div class="playhead" style="left:0%"><b></b></div>
+            </div>
+            <div class="tl-axis"><span class="sec" style="left:0.00%">0</span><span class="sec" style="left:20.00%">2</span><span class="sec" style="left:40.00%">4</span><span class="sec" style="left:60.00%">6</span><span class="sec" style="left:80.00%">8</span><span class="sec" style="left:100.00%">10</span></div>
+            <p class="tl-readout">clock <b class="tlnow">0.00s</b> &nbsp;<span class="tlwhat">drag, scrub or click a row</span></p>
+          </div>
+          <div class="tablewrap">
+            <table class="trace">
+              <thead><tr><th>#</th><th>Tool</th><th>Window</th><th>Returned</th></tr></thead>
+              <tbody><tr id="b0"><td>0</td><td class="tool">audio_asr</td><td class="win">1.25&ndash;2.25s</td><td class="obs">no speech detected &mdash; rules out talking on the phone</td></tr><tr id="b1"><td>1</td><td class="tool">video_temporal_ground</td><td class="win">2.25&ndash;3.75s</td><td class="obs">&ldquo;What is the person in the driver&rsquo;s seat doing?&rdquo; localized to t = [1.04, 3.31]s</td></tr><tr id="b2"><td>2</td><td class="tool">video_caption</td><td class="win">3.75&ndash;5.75s</td><td class="obs">&ldquo;a man &hellip; in the driver&rsquo;s seat &hellip; looking down at and interacting with his smartphone&rdquo;</td></tr><tr id="b3" class="commit"><td>3</td><td class="tool">commit</td><td class="win">6.23s</td><td class="obs">holding and looking at a phone, 3.8 s before the stream ends</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+</section>
+
+<hr class="rule">
+
+<!-- Simulation -->
+<section class="section">
+  <div class="container">
+    <div class="has-text-centered">
+      <h3 class="title is-3">In Simulation</h3>
+    </div>
+
+    <div class="case" id="sim-hmeqa">
+      <div class="case-head">
+        <h4>HM-EQA navigation</h4>
+        <p class="lede">&ldquo;Is there any pot left on the stove?&rdquo;</p>
+      </div>
+      <div class="casegrid">
+        <div class="left"><figure>
+          <video controls muted loop playsinline preload="metadata"><source src="assets/video/hmeqa_probe.mp4" type="video/mp4"></video>
+        </figure></div>
+        <div class="right">
+          <div class="tl">
+            <div class="tl-track" data-total="14" data-calls='[["h0", "look", 0, 2], ["h1", "list_frontiers", 2, 4], ["h2", "goto_frontier", 4, 6], ["h3", "look", 6, 8], ["h4", "turn", 8, 10], ["h5", "look", 10, 12], ["h6", "localize", 12, 14]]'>
+              <button class="call read" style="left:0.000%;width:14.286%" data-row="h0" title="look"></button><button class="call survey" style="left:14.286%;width:14.286%" data-row="h1" title="list_frontiers"></button><button class="call" style="left:28.571%;width:14.286%" data-row="h2" title="goto_frontier"></button><button class="call read" style="left:42.857%;width:14.286%" data-row="h3" title="look"></button><button class="call aim" style="left:57.143%;width:14.286%" data-row="h4" title="turn"></button><button class="call read" style="left:71.429%;width:14.286%" data-row="h5" title="look"></button><button class="call survey" style="left:85.714%;width:14.286%" data-row="h6" title="localize"></button>
+              <div class="stop" style="left:100.000%"></div>
+              <div class="playhead" style="left:0%"><b></b></div>
+            </div>
+            <div class="tl-axis"><span class="sec" style="left:0.00%">0</span><span class="sec" style="left:28.57%">4</span><span class="sec" style="left:57.14%">8</span><span class="sec" style="left:85.71%">12</span><span class="sec" style="left:100.00%">14</span></div>
+            <p class="tl-readout">clip time <b class="tlnow">0.00s</b> &nbsp;<span class="tlwhat">drag, scrub or click a row</span></p>
+          </div>
+          <div class="tablewrap">
+            <table class="trace">
+              <thead><tr><th>#</th><th>Tool</th><th>Returned</th></tr></thead>
+              <tbody><tr id="h0"><td>0</td><td class="tool">look</td><td class="obs">a kitchen with an exit to the left leading to a stair</td></tr><tr id="h1"><td>1</td><td class="tool">list_frontiers</td><td class="obs">unexplored places: F1 0.9 m away, turn 127&deg; left, 23&#37; &hellip;</td></tr><tr id="h2"><td>2</td><td class="tool">goto_frontier</td><td class="obs">arrived at F5 (1.35 m travelled), now facing it</td></tr><tr id="h3"><td>3</td><td class="tool">look</td><td class="obs">a kitchen with an exit to the left into a dining room</td></tr><tr id="h4"><td>4</td><td class="tool">turn(&minus;45&deg;)</td><td class="obs">heading now 21.6&deg;</td></tr><tr id="h5"><td>5</td><td class="tool">look</td><td class="obs">a kitchen with an exit to the left, featuring a stove &mdash; the stove top is clear</td></tr><tr id="h6" class="commit"><td>6</td><td class="tool">localize &rarr; commit</td><td class="obs">no</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="case" id="sim-realman">
+      <div class="case-head">
+        <h4>RealMan manipulation</h4>
+        <p class="lede">Push the box 16&nbsp;cm across the table.</p>
+      </div>
+      <div class="casegrid">
+        <div class="left"><figure>
+          <video controls muted loop playsinline preload="metadata"><source src="assets/video/realman_push.mp4" type="video/mp4"></video>
+        </figure></div>
+        <div class="right">
+          <div class="tl">
+            <div class="tl-track" data-total="5.06" data-calls='[["m0", "look (left arm)", 0.0, 1.63], ["m1", "push (right arm)", 1.63, 4.44], ["m2", "evaluate_task", 4.44, 5.06]]'>
+              <div class="band speech" style="left:0.000%;width:32.200%"><span>left arm &rarr; watch pose</span></div>
+              <div class="band gesture" style="left:32.200%;width:55.500%"><span>right arm strokes, left wrist watching</span></div>
+              <button class="call aim" style="left:0.000%;width:32.200%" data-row="m0" title="look (left arm)"></button><button class="call" style="left:32.200%;width:55.500%" data-row="m1" title="push (right arm), +16 cm"></button><button class="call read" style="left:87.700%;width:12.300%" data-row="m2" title="evaluate_task"></button>
+              <div class="stop" style="left:100.000%"></div>
+              <div class="playhead" style="left:0%"><b></b></div>
+            </div>
+            <div class="tl-axis"><span class="sec" style="left:0.00%">0</span><span class="sec" style="left:19.76%">1</span><span class="sec" style="left:39.53%">2</span><span class="sec" style="left:59.29%">3</span><span class="sec" style="left:79.05%">4</span><span class="sec" style="left:100.00%">5.1</span></div>
+            <p class="tl-readout">clock <b class="tlnow">0.00s</b> &nbsp;<span class="tlwhat">drag, scrub or click a row</span></p>
+          </div>
+          <div class="tablewrap">
+            <table class="trace">
+              <thead><tr><th>#</th><th>Tool</th><th>Returned</th></tr></thead>
+              <tbody><tr id="m0"><td>0</td><td class="tool">look (left arm)</td><td class="obs">the left arm travels to [0.097, 0.400, 1.016] and holds there, so its wrist camera looks down the line the box is about to travel</td></tr><tr id="m1"><td>1</td><td class="tool">push (right arm)</td><td class="obs">the right arm stages behind the box and drives it 0.160&nbsp;m along +y; watched from the left wrist at framing quality 0.43, the box turned 0&deg; through the stroke &mdash; it slid rather than tipping &mdash; and came to rest 0.211&nbsp;m from the far edge</td></tr><tr id="m2" class="commit"><td>2</td><td class="tool">evaluate_task</td><td class="obs">success &mdash; measured displacement 0.160&nbsp;m against the 0.16&nbsp;m target, progress 1.000</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="case" id="sim-carla">
+      <div class="case-head">
+        <h4>CARLA guided parking</h4>
+        <p class="lede">Park in the bay the person outside is pointing at.</p>
+      </div>
+      <div class="casegrid">
+        <div class="left"><figure>
+          <!-- no loop: this is the only clip with real speech on it, and a 2.2 s
+               utterance restarting on repeat is more irritating than useful -->
+          <video controls playsinline preload="metadata" poster="assets/fig/carla_guided_parking_poster.jpg"><source src="assets/video/carla_guided_parking.mp4" type="video/mp4"></video>
+        </figure></div>
+        <div class="right">
+          <div class="tl">
+            <div class="tl-track" data-total="4.80" data-calls='[["r0", "probe_activity", 0.0, 0.1], ["r1", "probe_activity", 0.7, 0.8], ["r2", "probe_activity", 1.4, 1.5], ["r3", "probe_activity", 2.1, 2.2], ["r4", "listen_speech", 2.55, 3.95], ["r5", "scan_occupancy", 4.0, 4.05], ["r6", "listen_speech", 4.1, 4.55], ["r7", "read_gesture", 4.6, 4.7]]'>
+              <div class="band pre" style="left:0.000%;width:53.125%"><span>walking up</span></div>
+              <div class="band speech" style="left:53.125%;width:44.979%"><span>speaking</span></div>
+              <div class="band gesture" style="left:65.625%;width:10.417%"><span>arm goes up</span></div>
+              <button class="call aim" style="left:0.000%;width:2.083%" data-row="r0" title="probe_activity 0.00-0.10s"></button><button class="call aim" style="left:14.583%;width:2.083%" data-row="r1" title="probe_activity 0.70-0.80s"></button><button class="call aim" style="left:29.167%;width:2.083%" data-row="r2" title="probe_activity 1.40-1.50s"></button><button class="call aim" style="left:43.750%;width:2.083%" data-row="r3" title="probe_activity 2.10-2.20s"></button><button class="call" style="left:53.125%;width:29.167%" data-row="r4" title="listen_speech 2.55-3.95s"></button><button class="call survey" style="left:83.333%;width:1.042%" data-row="r5" title="scan_occupancy 4.00-4.05s"></button><button class="call" style="left:85.417%;width:9.375%" data-row="r6" title="listen_speech 4.10-4.55s"></button><button class="call read" style="left:95.833%;width:2.083%" data-row="r7" title="read_gesture 4.60-4.70s"></button>
+              <div class="stop" style="left:97.917%"></div>
+              <div class="playhead" style="left:0%"><b></b></div>
+            </div>
+            <div class="tl-axis"><span class="sec" style="left:0.00%">0</span><span class="sec" style="left:20.83%">1</span><span class="sec" style="left:41.67%">2</span><span class="sec" style="left:62.50%">3</span><span class="sec" style="left:83.33%">4</span><span class="sec" style="left:100.00%">4.8</span></div>
+            <p class="tl-readout">clock <b class="tlnow">0.00s</b> &nbsp;<span class="tlwhat">drag, scrub or click a row</span></p>
+          </div>
+          <div class="tablewrap">
+            <table class="trace">
+              <thead><tr><th>#</th><th>Tool</th><th>Window</th><th>Returned</th></tr></thead>
+              <tbody><tr id="r0"><td>0</td><td class="tool">probe_activity</td><td class="win">0.00&ndash;0.10s</td><td class="obs">the four surround views, downscaled into one 640&times;360 sweep: a person on the driver&rsquo;s side, confidence 0.84 &mdash; this is what wakes the rest of the chain, and what picks the camera</td></tr><tr id="r1"><td>1</td><td class="tool">probe_activity</td><td class="win">0.70&ndash;0.80s</td><td class="obs">still on the driver&rsquo;s side, confidence 0.91 &mdash; walking, not yet speaking</td></tr><tr id="r2"><td>2</td><td class="tool">probe_activity</td><td class="win">1.40&ndash;1.50s</td><td class="obs">same, confidence 0.91</td></tr><tr id="r3"><td>3</td><td class="tool">probe_activity</td><td class="win">2.10&ndash;2.20s</td><td class="obs">same, confidence 0.93 &mdash; arrived and standing; nothing has been said, so nothing expensive has run</td></tr><tr id="r4"><td>4</td><td class="tool">listen_speech</td><td class="win">2.55&ndash;3.95s</td><td class="obs">on the 1.2&nbsp;s of speech uttered so far: &ldquo;Not here.&rdquo; &mdash; the refusal is already decodable, the bay to use is not</td></tr><tr id="r5"><td>5</td><td class="tool">scan_occupancy</td><td class="win">4.00&ndash;4.05s</td><td class="obs">all six bays resolved from the front-wide view: 0, 2, 4 taken; 1, 3, 5 free &mdash; run while the speaker is still mid-sentence</td></tr><tr id="r6"><td>6</td><td class="tool">listen_speech</td><td class="win">4.10&ndash;4.55s</td><td class="obs">on 1.8&nbsp;s of speech: &ldquo;Not here, park in that middle spot.&rdquo; &mdash; the direction cue lands, middle</td></tr><tr id="r7" class="commit"><td>7</td><td class="tool">read_gesture &rarr; commit</td><td class="win">4.60&ndash;4.70s</td><td class="obs">on the camera the probe chose, arm bearing &minus;151.9&deg;; the true speaker-to-bay-3 bearing is &minus;153.8&deg; &rarr; bay 3, the middle free bay the arm points nearest</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container has-text-centered">
+    <p><b>Recordings and privacy.</b> The vehicle, cabin, and robot clips are real recordings from the
+    testbeds described above, captured by the authors with the consent of everyone appearing in them.
+    Faces, and any printed label that could identify a person, a product or a place, are pixelated frame by frame before publication.</p>
+    <p>This website is licensed under a
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons
+    Attribution-ShareAlike 4.0 International License</a>. The layout borrows from the
+    <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a> project page template.</p>
+  </div>
+</footer>
+
+
+<script>
+// Every sample's clips form one group. Starting a clip in one sample stops
+// every other sample, so two soundtracks never run at once.
+var GROUPS=[];
+function stopOtherSamples(mine){
+  GROUPS.forEach(function(g){
+    if(g===mine) return;
+    g.forEach(function(o){ if(!o.paused) o.pause(); });
+  });
+}
+document.querySelectorAll('.case').forEach(function(box){
+  var track=box.querySelector('.tl-track'); if(!track) return;
+  var T=parseFloat(track.dataset.total||'12'),
+      calls=JSON.parse(track.dataset.calls||'[]'),
+      phases=JSON.parse(track.dataset.phases||'[]'),
+      ph=box.querySelector('.playhead'), now=box.querySelector('.tlnow'),
+      what=box.querySelector('.tlwhat'),
+      vids=[].slice.call(box.querySelectorAll('video')), vid=vids[0],
+      bars=[].slice.call(track.querySelectorAll('.call')), dragging=false;
+  var last=calls.length-1;
+  // EPS: seeking a <video> to exactly a call boundary lands a hair short of it
+  // (2.05 comes back as 2.049999), and the timeupdate repaint then finds nothing
+  // in flight — clicking the commit row would clear its own highlight.
+  var EPS=0.02;
+  function at(t){
+    if(!calls.length) return -1;
+    for(var i=0;i<last;i++) if(t>=calls[i][2]-EPS&&t<calls[i][3]-EPS) return i;
+    if(t>=calls[last][2]-EPS) return last;
+    return -1;
+  }
+  function phaseAt(t){
+    for(var i=0;i<phases.length;i++) if(t>=phases[i][1]&&t<phases[i][2]) return i;
+    return -1;
+  }
+  function paint(t,moveVideo){
+    t=Math.max(0,Math.min(T,t));
+    if(ph) ph.style.left=(t/T*100)+'%';
+    if(now) now.textContent=t.toFixed(2)+'s';
+    var i=at(t);
+    bars.forEach(function(b,k){ b.classList.toggle('active',k===i); });
+    box.querySelectorAll('tr.hit').forEach(function(r){ r.classList.remove('hit'); });
+    if(i>=0){ var r=document.getElementById(calls[i][0]); if(r) r.classList.add('hit'); }
+    if(what){
+      if(calls.length) what.textContent = i<0 ? 'nothing in flight' :
+        (i===last ? 'answered, the clock has stopped' : 'in call '+i+', '+calls[i][1]);
+      else{ var j=phaseAt(t); what.textContent = j<0 ? 'before the arm moves' : phases[j][0]; }
+    }
+    // every clip of this sample follows the same clock
+    if(moveVideo && !track.dataset.nosync) vids.forEach(function(v){
+      if(v.duration && t<=v.duration) try{ v.currentTime=t; }catch(err){}
+    });
+  }
+  function fromEvent(e){
+    var r=track.getBoundingClientRect();
+    var x=(e.touches?e.touches[0].clientX:e.clientX)-r.left;
+    return Math.max(0,Math.min(1,x/r.width))*T;
+  }
+  track.addEventListener('pointerdown',function(e){
+    dragging=true; try{track.setPointerCapture(e.pointerId);}catch(err){}
+    paint(fromEvent(e),true); e.preventDefault();
+  });
+  track.addEventListener('pointermove',function(e){ if(dragging) paint(fromEvent(e),true); });
+  ['pointerup','pointercancel','pointerleave'].forEach(function(ev){
+    track.addEventListener(ev,function(){ dragging=false; });
+  });
+  // One transport for every clip of a sample. `syncing` stops a propagated play/pause/seek
+  // from bouncing back and re-triggering the clip it came from.
+  var syncing=false;
+  function withSync(fn){ if(syncing) return; syncing=true; try{ fn(); } finally{ syncing=false; } }
+  GROUPS.push(vids);
+  vids.forEach(function(v){
+    v.addEventListener('timeupdate',function(){
+      if(dragging || track.dataset.nosync || syncing) return;
+      paint(v.currentTime,false);
+      withSync(function(){
+        vids.forEach(function(o){                     // keep the sample's other clips aligned
+          if(o!==v && o.duration && Math.abs(o.currentTime-v.currentTime)>0.25
+             && v.currentTime<=o.duration)
+            try{ o.currentTime=v.currentTime; }catch(err){}
+        });
+      });
+    });
+    v.addEventListener('play',function(){
+      stopOtherSamples(vids);
+      withSync(function(){
+        vids.forEach(function(o){ if(o!==v) o.play().catch(function(){}); });
+      });
+    });
+    v.addEventListener('pause',function(){
+      if(syncing) return;
+      withSync(function(){
+        vids.forEach(function(o){ if(o!==v) o.pause(); });
+      });
+    });
+  });
+  bars.forEach(function(b,k){
+    b.addEventListener('click',function(e){
+      e.stopPropagation(); paint(calls[k][2],true);
+      var r=document.getElementById(calls[k][0]);
+      if(r) r.scrollIntoView({behavior:'smooth',block:'center'});
+    });
+  });
+  calls.forEach(function(c){
+    var r=document.getElementById(c[0]); if(!r) return;
+    r.style.cursor='pointer'; r.title='move the clock to '+c[2].toFixed(1)+'s';
+    r.addEventListener('click',function(){ paint(c[2],true); });
+  });
+  paint(0,false);
+});
+
+// Clips that are not part of a case -- the demo reel -- are one-clip samples, so they
+// stop the others and get stopped by them on the same rule.
+(function(){
+  var grouped=[];
+  GROUPS.forEach(function(g){ g.forEach(function(v){ grouped.push(v); }); });
+  document.querySelectorAll('video').forEach(function(v){
+    if(grouped.indexOf(v)>=0) return;
+    var solo=[v]; GROUPS.push(solo);
+    v.addEventListener('play',function(){ stopOtherSamples(solo); });
+  });
+})();
+</script>
+</body>
+</html>
